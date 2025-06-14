@@ -1,0 +1,1127 @@
+    <div class="section">
+        <h2>⏰ Analisi Temporale</h2><!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diario Minzionale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .form-section {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 2px;
+            font-size: 0.8em;
+        }
+
+        input, select, textarea {
+            padding: 6px 8px;
+            border: 2px solid #e1e5e9;
+            border-radius: 5px;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .entries-section {
+            margin-top: 20px;
+        }
+
+        .entry {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .entry:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .entry-date {
+            font-weight: 600;
+            color: #4facfe;
+            font-size: 1em;
+        }
+
+        .entry-time {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .entry-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9ff;
+            border-radius: 6px;
+        }
+
+        .detail-label {
+            font-size: 0.75em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .stats h3 {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+        }
+
+        .export-section {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 8px;
+                border-radius: 8px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .entry-details {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💧 Diario Minzionale</h1>
+            <p>Strumento di monitoraggio per supporto diagnostico</p>
+        </div>
+
+        <div class="content">
+            <div class="form-section">
+                <h2>👤 Informazioni Paziente</h2>
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="patientName">Nome Completo del Paziente</label>
+                        <input type="text" id="patientName" name="patientName" placeholder="Inserisci nome e cognome..." onchange="savePatientName()">
+                    </div>
+                </div>
+            </div>
+
+            <div id="stats" class="stats" style="display: none;">
+                <h3>Statistiche Giornaliere</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalUrinations">0</div>
+                        <div class="stat-label">Minzioni</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalUrinationVol">0</div>
+                        <div class="stat-label">Uscite (ml)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="avgUrinationVol">0</div>
+                        <div class="stat-label">Media (ml)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalFluids">0</div>
+                        <div class="stat-label">Liquidi</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalFluidVol">0</div>
+                        <div class="stat-label">Entrate (ml)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="balance">0</div>
+                        <div class="stat-label">Bilancio (ml)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>💧 Minzione</h2>
+                <form id="entryForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Data</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Ora</label>
+                            <input type="time" id="time" name="time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="volume">Volume (ml)</label>
+                            <input type="number" id="volume" name="volume" min="1" max="2000" placeholder="250" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="urgency">Urgenza (1-5)</label>
+                            <select id="urgency" name="urgency">
+                                <option value="">-</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="stimulus">Stimolo</label>
+                            <select id="stimulus" name="stimulus">
+                                <option value="">-</option>
+                                <option value="nessuna">Nessuna</option>
+                                <option value="leggera">Leggera</option>
+                                <option value="normale">Normale</option>
+                                <option value="forte">Forte</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="incontinence">Incontinenza</label>
+                            <select id="incontinence" name="incontinence">
+                                <option value="">-</option>
+                                <option value="no">No</option>
+                                <option value="light">Leggera</option>
+                                <option value="moderate">Moderata</option>
+                                <option value="severe">Grave</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="activity">Attività</label>
+                            <select id="activity" name="activity">
+                                <option value="">-</option>
+                                <option value="rest">Riposo</option>
+                                <option value="walking">Camminata</option>
+                                <option value="exercise">Esercizio</option>
+                                <option value="work">Lavoro</option>
+                                <option value="sleep">Sonno</option>
+                                <option value="other">Altro</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label for="notes">Note</label>
+                            <textarea id="notes" name="notes" placeholder="Note aggiuntive..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">💾 Salva Minzione</button>
+                </form>
+            </div>
+
+            <div class="form-section">
+                <h2>🥤 Liquido Assunto</h2>
+                <form id="fluidForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fluidDate">Data</label>
+                            <input type="date" id="fluidDate" name="fluidDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fluidTime">Ora</label>
+                            <input type="time" id="fluidTime" name="fluidTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fluidVolume">Volume (ml)</label>
+                            <input type="number" id="fluidVolume" name="fluidVolume" min="1" max="2000" placeholder="250" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fluidType">Tipo</label>
+                            <select id="fluidType" name="fluidType">
+                                <option value="">-</option>
+                                <option value="water">Acqua</option>
+                                <option value="coffee">Caffè</option>
+                                <option value="tea">Tè</option>
+                                <option value="juice">Succo</option>
+                                <option value="soda">Bibita</option>
+                                <option value="milk">Latte</option>
+                                <option value="alcohol">Alcolico</option>
+                                <option value="other">Altro</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label for="fluidNotes">Note</label>
+                            <textarea id="fluidNotes" name="fluidNotes" placeholder="Note aggiuntive..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">💾 Salva Liquido</button>
+                </form>
+            </div>
+
+            <div class="entries-section">
+                <h2>📊 Registrazioni</h2>
+                <div id="entriesList"></div>
+            </div>
+
+            <div class="export-section">
+                <button class="btn" onclick="exportMedicalReport()">📋 Report</button>
+                <button class="btn btn-secondary" onclick="clearAllData()">🗑️ Cancella Tutti</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let entries = [];
+        let fluidEntries = [];
+        let patientName = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const currentTime = now.toTimeString().slice(0, 5);
+            
+            document.getElementById('date').value = today;
+            document.getElementById('time').value = currentTime;
+            document.getElementById('fluidDate').value = today;
+            document.getElementById('fluidTime').value = currentTime;
+            
+            // Carica il nome del paziente se salvato
+            loadPatientName();
+            
+            loadEntries();
+            updateStats();
+        });
+
+        function savePatientName() {
+            patientName = document.getElementById('patientName').value;
+        }
+
+        function loadPatientName() {
+            // In un ambiente reale, questo caricherà il nome salvato
+            document.getElementById('patientName').value = patientName;
+        }
+
+        document.getElementById('entryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const entry = {
+                id: Date.now(),
+                type: 'urination',
+                date: formData.get('date'),
+                time: formData.get('time'),
+                volume: parseInt(formData.get('volume')),
+                urgency: formData.get('urgency') ? parseInt(formData.get('urgency')) : null,
+                stimulus: formData.get('stimulus') || null,
+                incontinence: formData.get('incontinence') || null,
+                activity: formData.get('activity') || null,
+                notes: formData.get('notes') || null,
+                timestamp: new Date(formData.get('date') + 'T' + formData.get('time'))
+            };
+            
+            entries.push(entry);
+            entries.sort((a, b) => b.timestamp - a.timestamp);
+            
+            displayEntries();
+            updateStats();
+            
+            // Reset form automaticamente dopo salvataggio
+            e.target.reset();
+            const now = new Date();
+            document.getElementById('date').value = now.toISOString().split('T')[0];
+            document.getElementById('time').value = now.toTimeString().slice(0, 5);
+            
+            alert('✅ Minzione registrata!');
+        });
+
+        document.getElementById('fluidForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const entry = {
+                id: Date.now(),
+                type: 'fluid',
+                date: formData.get('fluidDate'),
+                time: formData.get('fluidTime'),
+                fluidType: formData.get('fluidType') || null,
+                volume: parseInt(formData.get('fluidVolume')),
+                notes: formData.get('fluidNotes') || null,
+                timestamp: new Date(formData.get('fluidDate') + 'T' + formData.get('fluidTime'))
+            };
+            
+            fluidEntries.push(entry);
+            fluidEntries.sort((a, b) => b.timestamp - a.timestamp);
+            
+            displayEntries();
+            updateStats();
+            
+            // Reset form automaticamente dopo salvataggio
+            e.target.reset();
+            const now = new Date();
+            document.getElementById('fluidDate').value = now.toISOString().split('T')[0];
+            document.getElementById('fluidTime').value = now.toTimeString().slice(0, 5);
+            
+            alert('💧 Liquido registrato!');
+        });
+
+        function clearForm() {
+            const form = document.getElementById('entryForm');
+            form.reset();
+            
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const currentTime = now.toTimeString().slice(0, 5);
+            
+            document.getElementById('date').value = today;
+            document.getElementById('time').value = currentTime;
+        }
+
+        function clearFluidForm() {
+            const form = document.getElementById('fluidForm');
+            form.reset();
+            
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const currentTime = now.toTimeString().slice(0, 5);
+            
+            document.getElementById('fluidDate').value = today;
+            document.getElementById('fluidTime').value = currentTime;
+        }
+
+        function displayEntries() {
+            const entriesList = document.getElementById('entriesList');
+            
+            const allEntries = [...entries, ...fluidEntries].sort((a, b) => b.timestamp - a.timestamp);
+            
+            if (allEntries.length === 0) {
+                entriesList.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">Nessuna registrazione presente.</p>';
+                return;
+            }
+            
+            const entriesHTML = allEntries.map(entry => {
+                if (entry.type === 'fluid') {
+                    const fluidTypeText = {
+                        'water': 'Acqua', 'coffee': 'Caffè', 'tea': 'Tè', 'juice': 'Succo',
+                        'soda': 'Bibita', 'milk': 'Latte', 'alcohol': 'Alcolico', 'other': 'Altro'
+                    };
+                    
+                    return `
+                        <div class="entry" style="border-left: 4px solid #00f2fe;">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-date">🥤 ${new Date(entry.timestamp).toLocaleDateString('it-IT')}</div>
+                                    <div class="entry-time">${entry.time} - Liquido</div>
+                                </div>
+                                <button class="delete-btn" onclick="deleteFluidEntry(${entry.id})">Elimina</button>
+                            </div>
+                            <div class="entry-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Volume</div>
+                                    <div class="detail-value">${entry.volume} ml</div>
+                                </div>
+                                ${entry.fluidType ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Tipo</div>
+                                    <div class="detail-value">${fluidTypeText[entry.fluidType] || entry.fluidType}</div>
+                                </div>
+                                ` : ''}
+                                ${entry.notes ? `
+                                <div class="detail-item" style="grid-column: 1 / -1;">
+                                    <div class="detail-label">Note</div>
+                                    <div class="detail-value" style="text-align: left; font-size: 0.8em;">${entry.notes}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const incontinenceText = {
+                        'no': 'No', 'light': 'Leggera', 'moderate': 'Moderata', 'severe': 'Grave'
+                    };
+                    
+                    const stimulusText = {
+                        'nessuna': 'Nessuna', 'leggera': 'Leggera', 'normale': 'Normale', 'forte': 'Forte'
+                    };
+                    
+                    const activityText = {
+                        'rest': 'Riposo', 'walking': 'Camminata', 'exercise': 'Esercizio', 
+                        'work': 'Lavoro', 'sleep': 'Sonno', 'other': 'Altro'
+                    };
+                    
+                    return `
+                        <div class="entry">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-date">💧 ${new Date(entry.timestamp).toLocaleDateString('it-IT')}</div>
+                                    <div class="entry-time">${entry.time} - Minzione</div>
+                                </div>
+                                <button class="delete-btn" onclick="deleteEntry(${entry.id})">Elimina</button>
+                            </div>
+                            <div class="entry-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Volume</div>
+                                    <div class="detail-value">${entry.volume} ml</div>
+                                </div>
+                                ${entry.urgency ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Urgenza</div>
+                                    <div class="detail-value">${entry.urgency}/5</div>
+                                </div>
+                                ` : ''}
+                                ${entry.stimulus ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Stimolo</div>
+                                    <div class="detail-value">${stimulusText[entry.stimulus]}</div>
+                                </div>
+                                ` : ''}
+                                ${entry.incontinence ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Incontinenza</div>
+                                    <div class="detail-value">${incontinenceText[entry.incontinence]}</div>
+                                </div>
+                                ` : ''}
+                                ${entry.activity ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Attività</div>
+                                    <div class="detail-value">${activityText[entry.activity]}</div>
+                                </div>
+                                ` : ''}
+                                ${entry.notes ? `
+                                <div class="detail-item" style="grid-column: 1 / -1;">
+                                    <div class="detail-label">Note</div>
+                                    <div class="detail-value" style="text-align: left; font-size: 0.8em;">${entry.notes}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+            
+            entriesList.innerHTML = entriesHTML;
+        }
+
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayUrinations = entries.filter(entry => entry.date === today);
+            const todayFluids = fluidEntries.filter(entry => entry.date === today);
+            
+            if (todayUrinations.length === 0 && todayFluids.length === 0) {
+                document.getElementById('stats').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('stats').style.display = 'block';
+            
+            const totalUrinations = todayUrinations.length;
+            const totalUrinationVolume = todayUrinations.reduce((sum, entry) => sum + entry.volume, 0);
+            const totalFluidVolume = todayFluids.reduce((sum, entry) => sum + entry.volume, 0);
+            const avgUrinationVolume = totalUrinations > 0 ? Math.round(totalUrinationVolume / totalUrinations) : 0;
+            const balance = totalFluidVolume - totalUrinationVolume;
+            
+            document.getElementById('totalUrinations').textContent = totalUrinations;
+            document.getElementById('totalUrinationVol').textContent = totalUrinationVolume;
+            document.getElementById('avgUrinationVol').textContent = avgUrinationVolume;
+            document.getElementById('totalFluids').textContent = todayFluids.length;
+            document.getElementById('totalFluidVol').textContent = totalFluidVolume;
+            document.getElementById('balance').textContent = balance;
+            
+            const balanceElement = document.getElementById('balance');
+            if (balance > 500) {
+                balanceElement.style.color = '#4CAF50';
+            } else if (balance < 0) {
+                balanceElement.style.color = '#f44336';
+            } else {
+                balanceElement.style.color = '#FF9800';
+            }
+        }
+
+        function deleteEntry(id) {
+            if (confirm('Elimina questa minzione?')) {
+                entries = entries.filter(entry => entry.id !== id);
+                displayEntries();
+                updateStats();
+            }
+        }
+
+        function deleteFluidEntry(id) {
+            if (confirm('Elimina questo liquido?')) {
+                fluidEntries = fluidEntries.filter(entry => entry.id !== id);
+                displayEntries();
+                updateStats();
+            }
+        }
+
+        function loadEntries() {
+            displayEntries();
+        }
+
+        function exportData() {
+            if (entries.length === 0 && fluidEntries.length === 0) {
+                alert('Nessun dato da esportare.');
+                return;
+            }
+            
+            let csvContent = "Tipo,Data,Ora,Volume (ml),Urgenza,Incontinenza,Attività,Tipo Liquido,Note\n";
+            
+            const allEntries = [...entries, ...fluidEntries].sort((a, b) => a.timestamp - b.timestamp);
+            
+            allEntries.forEach(entry => {
+                if (entry.type === 'fluid') {
+                    const row = [
+                        'Liquido',
+                        entry.date,
+                        entry.time,
+                        entry.volume,
+                        '',
+                        '',
+                        '',
+                        entry.fluidType || '',
+                        entry.notes ? entry.notes.replace(/,/g, ';') : ''
+                    ].join(',');
+                    csvContent += row + "\n";
+                } else {
+                    const row = [
+                        'Minzione',
+                        entry.date,
+                        entry.time,
+                        entry.volume,
+                        entry.urgency || '',
+                        entry.incontinence || '',
+                        entry.activity || '',
+                        '',
+                        entry.notes ? entry.notes.replace(/,/g, ';') : ''
+                    ].join(',');
+                    csvContent += row + "\n";
+                }
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `diario_minzionale_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportMedicalReport() {
+            if (entries.length === 0 && fluidEntries.length === 0) {
+                alert('Nessun dato per generare il report.');
+                return;
+            }
+            
+            // Aggiorna il nome del paziente
+            savePatientName();
+            
+            const allEntries = [...entries, ...fluidEntries].sort((a, b) => a.timestamp - b.timestamp);
+            const urinations = entries.sort((a, b) => a.timestamp - b.timestamp);
+            const fluids = fluidEntries.sort((a, b) => a.timestamp - b.timestamp);
+            
+            const stats = calculateMedicalStats(urinations, fluids);
+            const reportHTML = generateMedicalReportHTML(stats, urinations, fluids, allEntries);
+            
+            const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            
+            // Usa il nome del paziente nel filename se disponibile
+            const fileName = patientName ? 
+                `report_${patientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.html` :
+                `report_${new Date().toISOString().split('T')[0]}.html`;
+            
+            link.setAttribute('download', fileName);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function calculateMedicalStats(urinations, fluids) {
+            const totalDays = Math.max(1, new Set([...urinations, ...fluids].map(e => e.date)).size);
+            
+            const totalUrinations = urinations.length;
+            const totalUrinationVolume = urinations.reduce((sum, e) => sum + e.volume, 0);
+            const totalFluidVolume = fluids.reduce((sum, e) => sum + e.volume, 0);
+            const avgUrinationVolume = totalUrinations > 0 ? Math.round(totalUrinationVolume / totalUrinations) : 0;
+            const avgDailyUrinations = Math.round(totalUrinations / totalDays * 10) / 10;
+            const avgDailyUrinationVolume = Math.round(totalUrinationVolume / totalDays);
+            const avgDailyFluidIntake = Math.round(totalFluidVolume / totalDays);
+            const avgDailyBalance = avgDailyFluidIntake - avgDailyUrinationVolume;
+            
+            const urgencyEntries = urinations.filter(e => e.urgency !== null);
+            const avgUrgency = urgencyEntries.length > 0 ? 
+                Math.round(urgencyEntries.reduce((sum, e) => sum + e.urgency, 0) / urgencyEntries.length * 10) / 10 : 0;
+            const highUrgencyEpisodes = urinations.filter(e => e.urgency >= 4).length;
+            
+            // Analisi stimolo
+            const stimulusEntries = urinations.filter(e => e.stimulus !== null);
+            const stimulusDistribution = {
+                nessuna: urinations.filter(e => e.stimulus === 'nessuna').length,
+                leggera: urinations.filter(e => e.stimulus === 'leggera').length,
+                normale: urinations.filter(e => e.stimulus === 'normale').length,
+                forte: urinations.filter(e => e.stimulus === 'forte').length
+            };
+            const noStimulusRate = totalUrinations > 0 ? Math.round((stimulusDistribution.nessuna / totalUrinations * 100) * 10) / 10 : 0;
+            
+            const incontinenceEpisodes = urinations.filter(e => e.incontinence && e.incontinence !== 'no').length;
+            const incontinenceRate = totalUrinations > 0 ? Math.round((incontinenceEpisodes / totalUrinations * 100) * 10) / 10 : 0;
+            
+            const hourlyDistribution = {};
+            for (let h = 0; h < 24; h++) hourlyDistribution[h] = 0;
+            urinations.forEach(e => {
+                const hour = new Date(e.timestamp).getHours();
+                hourlyDistribution[hour]++;
+            });
+            
+            const maxHour = Object.keys(hourlyDistribution).reduce((a, b) => 
+                hourlyDistribution[a] > hourlyDistribution[b] ? a : b
+            );
+            
+            const nocturiaEpisodes = urinations.filter(e => {
+                const hour = new Date(e.timestamp).getHours();
+                return hour >= 22 || hour <= 6;
+            }).length;
+            const nocturiaRate = Math.round((nocturiaEpisodes / totalDays) * 10) / 10;
+            
+            return {
+                totalDays,
+                totalUrinations,
+                totalUrinationVolume,
+                totalFluidVolume,
+                avgUrinationVolume,
+                avgDailyUrinations,
+                avgDailyUrinationVolume,
+                avgDailyFluidIntake,
+                avgDailyBalance,
+                avgUrgency,
+                highUrgencyEpisodes,
+                stimulusDistribution,
+                noStimulusRate,
+                incontinenceEpisodes,
+                incontinenceRate,
+                hourlyDistribution,
+                maxHour,
+                nocturiaEpisodes,
+                nocturiaRate
+            };
+        }
+
+        function generateMedicalReportHTML(stats, urinations, fluids, allEntries) {
+            const dateRange = allEntries.length > 0 ? 
+                `${new Date(allEntries[0].timestamp).toLocaleDateString('it-IT')} - ${new Date(allEntries[allEntries.length-1].timestamp).toLocaleDateString('it-IT')}` : 
+                'Nessun dato';
+            
+            return `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report - Diario Minzionale</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 15px; line-height: 1.2; font-size: 0.85em; }
+        .header { text-align: center; border-bottom: 2px solid #4facfe; padding-bottom: 8px; margin-bottom: 12px; }
+        .header h1 { margin: 0 0 4px 0; font-size: 1.4em; }
+        .header p { margin: 1px 0; font-size: 0.8em; }
+        .section { margin-bottom: 10px; page-break-inside: avoid; }
+        .section h2 { color: #4facfe; border-bottom: 1px solid #eee; padding-bottom: 2px; margin: 0 0 6px 0; font-size: 1em; }
+        .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 6px 0; }
+        .stat-card { background: #f8f9ff; padding: 6px; border-radius: 3px; text-align: center; border-left: 2px solid #4facfe; }
+        .stat-number { font-size: 1.2em; font-weight: bold; color: #333; margin: 0; }
+        .stat-label { color: #666; font-size: 0.7em; margin: 2px 0 0 0; }
+        .alert { padding: 4px 6px; border-radius: 3px; margin: 3px 0; font-size: 0.8em; line-height: 1.2; }
+        .alert-info { background: #e3f2fd; border-left: 2px solid #2196f3; }
+        .alert-warning { background: #fff3e0; border-left: 2px solid #ff9800; }
+        .alert-danger { background: #ffebee; border-left: 2px solid #f44336; }
+        .table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 1em; }
+        .table th, .table td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+        .table th { background: #f5f5f5; font-weight: bold; }
+        .table th:nth-child(1), .table td:nth-child(1) { width: 12%; }
+        .table th:nth-child(2), .table td:nth-child(2) { width: 10%; }
+        .table th:nth-child(3), .table td:nth-child(3) { width: 8%; text-align: center; }
+        .table th:nth-child(4), .table td:nth-child(4) { width: 12%; text-align: center; }
+        .table th:nth-child(5), .table td:nth-child(5) { width: 8%; text-align: center; }
+        .table th:nth-child(6), .table td:nth-child(6) { width: 50%; }
+        .interpretation { background: #f0f8ff; padding: 8px; border-radius: 4px; margin: 8px 0; font-size: 0.9em; }
+        .interpretation p { margin: 3px 0; }
+        .interpretation ul { margin: 4px 0; padding-left: 18px; }
+        .interpretation li { margin: 2px 0; }
+        .interpretation table { margin: 6px 0; }
+        .interpretation table th, .interpretation table td { padding: 6px 8px; font-size: 1em; }
+        @media print { 
+            .no-print { display: none; }
+            body { margin: 10px; font-size: 0.9em; }
+            .section { margin-bottom: 10px; }
+            .stats-grid { grid-template-columns: repeat(6, 1fr); gap: 4px; }
+            .stat-card { padding: 4px; }
+            .table { font-size: 0.9em; }
+            .interpretation table th, .interpretation table td { font-size: 0.9em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 Report - Diario Minzionale</h1>
+        ${patientName ? `<p><strong>Paziente:</strong> ${patientName}</p>` : ''}
+        <p><strong>Periodo:</strong> ${dateRange}</p>
+        <p><strong>Durata:</strong> ${stats.totalDays} giorni - <strong>Generato:</strong> ${new Date().toLocaleDateString('it-IT')}</p>
+    </div>
+
+    <div class="section">
+        <h2>📊 Statistiche Generali</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">${stats.totalUrinations}</div>
+                <div class="stat-label">Minzioni Totali</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${stats.avgDailyUrinations}</div>
+                <div class="stat-label">Minzioni/Giorno</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${stats.avgUrinationVolume}</div>
+                <div class="stat-label">Volume Medio (ml)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${stats.avgDailyUrinationVolume}</div>
+                <div class="stat-label">Diuresi/Giorno (ml)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${stats.avgDailyFluidIntake}</div>
+                <div class="stat-label">Liquidi/Giorno (ml)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: ${stats.avgDailyBalance >= 0 ? '#4caf50' : '#f44336'}">${stats.avgDailyBalance > 0 ? '+' : ''}${stats.avgDailyBalance}</div>
+                <div class="stat-label">Bilancio/Giorno (ml)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🚨 Indicatori Clinici</h2>
+        ${stats.avgDailyUrinations > 8 ? 
+            '<div class="alert alert-warning"><strong>Frequenza minzionale:</strong> <span style="color: #ff9800">' + stats.avgDailyUrinations + '</span> volte/giorno (riferimento: 4-8).</div>' : 
+            '<div class="alert alert-info"><strong>Frequenza minzionale normale:</strong> ' + stats.avgDailyUrinations + ' volte/giorno (riferimento: 4-8).</div>'
+        }
+        ${stats.nocturiaRate > 1 ? 
+            '<div class="alert alert-warning"><strong>Minzioni notturne:</strong> <span style="color: #ff9800">' + stats.nocturiaRate + '</span> per notte (riferimento: 0-1).</div>' : 
+            '<div class="alert alert-info"><strong>Minzioni notturne normali:</strong> ' + stats.nocturiaRate + ' per notte (riferimento: 0-1).</div>'
+        }
+        ${stats.incontinenceRate > 0 ? 
+            '<div class="alert alert-warning"><strong>Episodi di incontinenza:</strong> <span style="color: #f44336">' + stats.incontinenceEpisodes + '</span> episodi (' + stats.incontinenceRate + '%).</div>' : 
+            '<div class="alert alert-info"><strong>Continenza normale:</strong> Nessun episodio registrato.</div>'
+        }
+        ${stats.avgUrgency > 3 ? 
+            '<div class="alert alert-warning"><strong>Urgenza media:</strong> <span style="color: #ff9800">' + stats.avgUrgency + '</span>/5. Episodi ≥4: ' + stats.highUrgencyEpisodes + '.</div>' : 
+            '<div class="alert alert-info"><strong>Urgenza normale:</strong> ' + stats.avgUrgency + '/5.</div>'
+        }
+        ${stats.noStimulusRate > 20 ? 
+            '<div class="alert alert-warning"><strong>Minzioni senza stimolo:</strong> <span style="color: #ff9800">' + stats.noStimulusRate + '%</span> (possibile ipocontrattilità).</div>' : 
+            stats.noStimulusRate > 0 ? 
+            '<div class="alert alert-info"><strong>Minzioni senza stimolo:</strong> ' + stats.noStimulusRate + '% delle minzioni.</div>' :
+            '<div class="alert alert-info"><strong>Stimolo sempre presente</strong> nelle minzioni registrate.</div>'
+        }
+        ${stats.avgUrinationVolume < 150 || stats.avgUrinationVolume > 400 ? 
+            '<div class="alert alert-warning"><strong>Volume medio per minzione:</strong> <span style="color: #ff9800">' + stats.avgUrinationVolume + '</span> ml (riferimento: 150-400ml).</div>' :
+            '<div class="alert alert-info"><strong>Volume medio normale:</strong> ' + stats.avgUrinationVolume + ' ml (riferimento: 150-400ml).</div>'
+        }
+    </div>
+
+    <div class="section">
+        <h2>📊 Analisi Stimolo Vescicale</h2>
+        <div class="interpretation">
+            <p><strong>Distribuzione sensazione vescicale:</strong></p>
+            <table class="table">
+                <tr>
+                    <th>Tipo Stimolo</th>
+                    <th>Nessuna</th>
+                    <th>Leggera</th>
+                    <th>Normale</th>
+                    <th>Forte</th>
+                </tr>
+                <tr>
+                    <td><strong>Minzioni</strong></td>
+                    <td>${stats.stimulusDistribution.nessuna}</td>
+                    <td>${stats.stimulusDistribution.leggera}</td>
+                    <td>${stats.stimulusDistribution.normale}</td>
+                    <td>${stats.stimulusDistribution.forte}</td>
+                </tr>
+            </table>
+            ${stats.noStimulusRate > 20 ? 
+                '<div class="alert alert-warning">Elevata percentuale di minzioni senza stimolo - valutare ipocontrattilità detrusoriale.</div>' :
+                '<div class="alert alert-info">Distribuzione normale della sensazione vescicale.</div>'
+            }
+        </div>
+    </div>
+        <div class="interpretation">
+            <p><strong>Fascia più frequente:</strong> ${stats.maxHour}:00-${parseInt(stats.maxHour)+1}:00 (${stats.hourlyDistribution[stats.maxHour]} minzioni)</p>
+            <table class="table">
+                <tr>
+                    <th>Fascia</th>
+                    <th>Mattino (06-12)</th>
+                    <th>Pomeriggio (12-18)</th>
+                    <th>Sera (18-22)</th>
+                    <th>Notte (22-06)</th>
+                </tr>
+                <tr>
+                    <td><strong>Minzioni</strong></td>
+                    <td>${[6,7,8,9,10,11].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
+                    <td>${[12,13,14,15,16,17].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
+                    <td>${[18,19,20,21].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
+                    <td>${[22,23,0,1,2,3,4,5].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>💧 Bilancio Idrico</h2>
+        <div class="interpretation">
+            <p><strong>Analisi del bilancio:</strong></p>
+            <ul>
+                <li>Liquidi assunti: <strong>${stats.avgDailyFluidIntake} ml/giorno</strong></li>
+                <li>Urina eliminata: <strong>${stats.avgDailyUrinationVolume} ml/giorno</strong></li>
+                <li>Bilancio netto: <strong style="color: ${stats.avgDailyBalance >= 0 ? '#4caf50' : '#f44336'}">${stats.avgDailyBalance > 0 ? '+' : ''}${stats.avgDailyBalance} ml/giorno</strong></li>
+            </ul>
+            ${Math.abs(stats.avgDailyBalance) > 500 ? 
+                '<div class="alert alert-warning">Bilancio significativo. Considerare perdite insensibili.</div>' :
+                '<div class="alert alert-info">Bilancio equilibrato.</div>'
+            }
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Dati Recenti</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Ora</th>
+                    <th>Tipo</th>
+                    <th>Vol.(ml)</th>
+                    <th>Stim.</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${allEntries.slice(-20).map(entry => `
+                    <tr>
+                        <td>${new Date(entry.timestamp).toLocaleDateString('it-IT')}</td>
+                        <td>${entry.time}</td>
+                        <td>${entry.type === 'urination' ? '💧' : '🥤'}</td>
+                        <td>${entry.volume}</td>
+                        <td>${entry.stimulus || '-'}</td>
+                        <td>${entry.notes || '-'}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>🔍 Note</h2>
+        <div class="interpretation">
+            <p>Report generato automaticamente dal diario minzionale. Dati auto-registrati.</p>
+            <p><strong>Parametri di riferimento:</strong></p>
+            <ul>
+                <li>Frequenza normale: 4-8 minzioni/giorno</li>
+                <li>Volume normale: 150-400ml/minzione</li>
+                <li>Nocturia: >1 minzione/notte</li>
+                <li>Urgenza elevata: ≥4/5</li>
+            </ul>
+            <p><em>Si raccomanda correlazione clinica e valutazione specialistica.</em></p>
+        </div>
+    </div>
+</body>
+</html>`;
+        }
+
+        function clearAllData() {
+            if (confirm('Cancellare tutti i dati?')) {
+                entries = [];
+                fluidEntries = [];
+                displayEntries();
+                updateStats();
+                alert('Dati cancellati.');
+            }
+        }
+    </script>
+</body>
+</html>
