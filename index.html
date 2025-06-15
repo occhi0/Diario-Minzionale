@@ -1149,19 +1149,15 @@
         .header p { margin: 1px 0; font-size: 0.8em; }
         .section { margin-bottom: 10px; page-break-inside: avoid; }
         .section h2 { color: #4facfe; border-bottom: 1px solid #eee; padding-bottom: 2px; margin: 0 0 6px 0; font-size: 1em; }
-@media print {
-    .stats-scroll {
-        overflow-x: visible !important;
-    }
-    .stats-grid {
-        display: grid !important;
-        grid-template-columns: repeat(6, 1fr) !important;
-        min-width: unset !important;
-    }
-    .stat-card {
-        page-break-inside: avoid;
-    }
-}
+        @media print {
+            .stats-scroll {
+                overflow-x: visible !important;
+            }
+        .stats-grid {
+            display: flex;
+            min-width: 720px;
+            gap: 6px;
+        }
         .stat-card { background: #f8f9ff; padding: 4px; border-radius: 3px; text-align: center; border-left: 2px solid #4facfe; }
         .stat-number { font-size: 1em; font-weight: bold; color: #333; margin: 0; }
         .stat-label { color: #666; font-size: 0.6em; margin: 1px 0 0 0; }
