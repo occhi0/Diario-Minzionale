@@ -1143,6 +1143,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report - Diario Minzionale</title>
     <style>
+                .diuretics-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .diuretics-table th,
+        .diuretics-table td {
+            text-align: center;
+        }
+        .diuretics-table th:first-child,
+        .diuretics-table td:first-child {
+            width: 30%;
+            text-align: left;
+            padding-left: 8px;
+        }
+        .diuretics-table th:not(:first-child),
+        .diuretics-table td:not(:first-child) {
+            width: 17.5%;
+        }
         body { font-family: Arial, sans-serif; margin: 15px; line-height: 1.2; font-size: 0.85em; }
         .header { text-align: center; border-bottom: 2px solid #4facfe; padding-bottom: 8px; margin-bottom: 12px; }
         .header h1 { margin: 0 0 4px 0; font-size: 1.4em; }
@@ -1254,7 +1272,8 @@
         <h2>☕ Analisi Effetti Diuretici</h2>
         <div class="interpretation">
             <p><strong>Distribuzione liquidi per effetto diuretico:</strong></p>
-            <table class="table">
+            <table class="table diuretics-table">
+
                 <tr>
                     <th>Effetto</th>
                     <th>🟢 Neutro</th>
