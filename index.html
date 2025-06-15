@@ -1,5 +1,4 @@
-    <div class="section">
-        <h2>⏰ Analisi Temporale</h2><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -410,17 +409,19 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="fluidType">Tipo</label>
-                            <select id="fluidType" name="fluidType">
+                            <select id="fluidType" name="fluidType" onchange="showDiureticEffect()">
                                 <option value="">-</option>
                                 <option value="water">Acqua</option>
-                                <option value="coffee">Caffè</option>
                                 <option value="tea">Tè</option>
+                                <option value="coffee">Caffè</option>
                                 <option value="juice">Succo</option>
-                                <option value="soda">Bibita</option>
+                                <option value="soda">Bibita gassata</option>
                                 <option value="milk">Latte</option>
                                 <option value="alcohol">Alcolico</option>
+                                <option value="energy">Energy drink</option>
                                 <option value="other">Altro</option>
                             </select>
+                            <small id="diureticEffect" style="color: #666; font-size: 0.75em; margin-top: 2px;"></small>
                         </div>
                         <div class="form-group" style="grid-column: span 2;">
                             <label for="fluidNotes">Note</label>
@@ -459,9 +460,7 @@
             document.getElementById('fluidDate').value = today;
             document.getElementById('fluidTime').value = currentTime;
             
-            // Carica il nome del paziente se salvato
             loadPatientName();
-            
             loadEntries();
             updateStats();
         });
@@ -477,6 +476,50 @@
                 patientName = saved;
                 document.getElementById('patientName').value = saved;
             }
+        }
+
+        function showDiureticEffect() {
+            const fluidType = document.getElementById('fluidType').value;
+            const effectElement = document.getElementById('diureticEffect');
+            
+            const diureticEffects = {
+                'water': '🟢 Neutro',
+                'milk': '🟢 Neutro', 
+                'juice': '🟡 Effetto leggero',
+                'tea': '🟡 Effetto leggero',
+                'soda': '🟠 Effetto moderato',
+                'coffee': '🟠 Effetto moderato',
+                'energy': '🔴 Effetto forte',
+                'alcohol': '🔴 Effetto forte',
+                'other': ''
+            };
+            
+            effectElement.textContent = diureticEffects[fluidType] || '';
+        }
+
+        function getDiureticLevel(fluidType) {
+            const levels = {
+                'water': 'neutro',
+                'milk': 'neutro',
+                'juice': 'leggero', 
+                'tea': 'leggero',
+                'soda': 'moderato',
+                'coffee': 'moderato',
+                'energy': 'forte',
+                'alcohol': 'forte',
+                'other': 'neutro'
+            };
+            return levels[fluidType] || 'neutro';
+        }
+
+        function getDiureticIcon(level) {
+            const icons = {
+                'neutro': '🟢',
+                'leggero': '🟡', 
+                'moderato': '🟠',
+                'forte': '🔴'
+            };
+            return icons[level] || '';
         }
 
         document.getElementById('entryForm').addEventListener('submit', function(e) {
@@ -504,7 +547,6 @@
             displayEntries();
             updateStats();
             
-            // Reset form automaticamente dopo salvataggio
             e.target.reset();
             const now = new Date();
             document.getElementById('date').value = now.toISOString().split('T')[0];
@@ -535,7 +577,6 @@
             displayEntries();
             updateStats();
             
-            // Reset form automaticamente dopo salvataggio
             e.target.reset();
             const now = new Date();
             document.getElementById('fluidDate').value = now.toISOString().split('T')[0];
@@ -543,30 +584,6 @@
             
             alert('💧 Liquido registrato!');
         });
-
-        function clearForm() {
-            const form = document.getElementById('entryForm');
-            form.reset();
-            
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            const currentTime = now.toTimeString().slice(0, 5);
-            
-            document.getElementById('date').value = today;
-            document.getElementById('time').value = currentTime;
-        }
-
-        function clearFluidForm() {
-            const form = document.getElementById('fluidForm');
-            form.reset();
-            
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            const currentTime = now.toTimeString().slice(0, 5);
-            
-            document.getElementById('fluidDate').value = today;
-            document.getElementById('fluidTime').value = currentTime;
-        }
 
         function displayEntries() {
             const entriesList = document.getElementById('entriesList');
@@ -582,7 +599,8 @@
                 if (entry.type === 'fluid') {
                     const fluidTypeText = {
                         'water': 'Acqua', 'coffee': 'Caffè', 'tea': 'Tè', 'juice': 'Succo',
-                        'soda': 'Bibita', 'milk': 'Latte', 'alcohol': 'Alcolico', 'other': 'Altro'
+                        'soda': 'Bibita gassata', 'milk': 'Latte', 'alcohol': 'Alcolico', 
+                        'energy': 'Energy drink', 'other': 'Altro'
                     };
                     
                     return `
@@ -602,7 +620,7 @@
                                 ${entry.fluidType ? `
                                 <div class="detail-item">
                                     <div class="detail-label">Tipo</div>
-                                    <div class="detail-value">${fluidTypeText[entry.fluidType] || entry.fluidType}</div>
+                                    <div class="detail-value">${fluidTypeText[entry.fluidType]} ${getDiureticIcon(getDiureticLevel(entry.fluidType))}</div>
                                 </div>
                                 ` : ''}
                                 ${entry.notes ? `
@@ -746,7 +764,6 @@
                 
                 if (savedEntries) {
                     entries = JSON.parse(savedEntries);
-                    // Riconverti le date timestamp
                     entries.forEach(entry => {
                         entry.timestamp = new Date(entry.timestamp);
                     });
@@ -754,14 +771,12 @@
                 
                 if (savedFluidEntries) {
                     fluidEntries = JSON.parse(savedFluidEntries);
-                    // Riconverti le date timestamp
                     fluidEntries.forEach(entry => {
                         entry.timestamp = new Date(entry.timestamp);
                     });
                 }
             } catch (error) {
                 console.error('Errore nel caricamento dati:', error);
-                // Se ci sono errori, inizializza array vuoti
                 entries = [];
                 fluidEntries = [];
             }
@@ -772,64 +787,12 @@
             displayEntries();
         }
 
-        function exportData() {
-            if (entries.length === 0 && fluidEntries.length === 0) {
-                alert('Nessun dato da esportare.');
-                return;
-            }
-            
-            let csvContent = "Tipo,Data,Ora,Volume (ml),Urgenza,Incontinenza,Attività,Tipo Liquido,Note\n";
-            
-            const allEntries = [...entries, ...fluidEntries].sort((a, b) => a.timestamp - b.timestamp);
-            
-            allEntries.forEach(entry => {
-                if (entry.type === 'fluid') {
-                    const row = [
-                        'Liquido',
-                        entry.date,
-                        entry.time,
-                        entry.volume,
-                        '',
-                        '',
-                        '',
-                        entry.fluidType || '',
-                        entry.notes ? entry.notes.replace(/,/g, ';') : ''
-                    ].join(',');
-                    csvContent += row + "\n";
-                } else {
-                    const row = [
-                        'Minzione',
-                        entry.date,
-                        entry.time,
-                        entry.volume,
-                        entry.urgency || '',
-                        entry.incontinence || '',
-                        entry.activity || '',
-                        '',
-                        entry.notes ? entry.notes.replace(/,/g, ';') : ''
-                    ].join(',');
-                    csvContent += row + "\n";
-                }
-            });
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `diario_minzionale_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         function exportMedicalReport() {
             if (entries.length === 0 && fluidEntries.length === 0) {
                 alert('Nessun dato per generare il report.');
                 return;
             }
             
-            // Aggiorna il nome del paziente
             savePatientName();
             
             const allEntries = [...entries, ...fluidEntries].sort((a, b) => a.timestamp - b.timestamp);
@@ -844,7 +807,6 @@
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
             
-            // Usa il nome del paziente nel filename se disponibile
             const fileName = patientName ? 
                 `report_${patientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.html` :
                 `report_${new Date().toISOString().split('T')[0]}.html`;
@@ -873,35 +835,24 @@
                 Math.round(urgencyEntries.reduce((sum, e) => sum + e.urgency, 0) / urgencyEntries.length * 10) / 10 : 0;
             const highUrgencyEpisodes = urinations.filter(e => e.urgency >= 4).length;
             
-            // Analisi stimolo
-            const stimulusEntries = urinations.filter(e => e.stimulus !== null);
-            const stimulusDistribution = {
-                nessuna: urinations.filter(e => e.stimulus === 'nessuna').length,
-                leggera: urinations.filter(e => e.stimulus === 'leggera').length,
-                normale: urinations.filter(e => e.stimulus === 'normale').length,
-                forte: urinations.filter(e => e.stimulus === 'forte').length
-            };
-            const noStimulusRate = totalUrinations > 0 ? Math.round((stimulusDistribution.nessuna / totalUrinations * 100) * 10) / 10 : 0;
-            
             const incontinenceEpisodes = urinations.filter(e => e.incontinence && e.incontinence !== 'no').length;
             const incontinenceRate = totalUrinations > 0 ? Math.round((incontinenceEpisodes / totalUrinations * 100) * 10) / 10 : 0;
-            
-            const hourlyDistribution = {};
-            for (let h = 0; h < 24; h++) hourlyDistribution[h] = 0;
-            urinations.forEach(e => {
-                const hour = new Date(e.timestamp).getHours();
-                hourlyDistribution[hour]++;
-            });
-            
-            const maxHour = Object.keys(hourlyDistribution).reduce((a, b) => 
-                hourlyDistribution[a] > hourlyDistribution[b] ? a : b
-            );
             
             const nocturiaEpisodes = urinations.filter(e => {
                 const hour = new Date(e.timestamp).getHours();
                 return hour >= 22 || hour <= 6;
             }).length;
             const nocturiaRate = Math.round((nocturiaEpisodes / totalDays) * 10) / 10;
+            
+            const diureticAnalysis = {
+                neutro: fluids.filter(e => getDiureticLevel(e.fluidType) === 'neutro').length,
+                leggero: fluids.filter(e => getDiureticLevel(e.fluidType) === 'leggero').length,
+                moderato: fluids.filter(e => getDiureticLevel(e.fluidType) === 'moderato').length,
+                forte: fluids.filter(e => getDiureticLevel(e.fluidType) === 'forte').length
+            };
+            const totalFluids = fluids.length;
+            const diureticFluidsCount = diureticAnalysis.leggero + diureticAnalysis.moderato + diureticAnalysis.forte;
+            const diureticRate = totalFluids > 0 ? Math.round((diureticFluidsCount / totalFluids * 100) * 10) / 10 : 0;
             
             return {
                 totalDays,
@@ -915,14 +866,12 @@
                 avgDailyBalance,
                 avgUrgency,
                 highUrgencyEpisodes,
-                stimulusDistribution,
-                noStimulusRate,
                 incontinenceEpisodes,
                 incontinenceRate,
-                hourlyDistribution,
-                maxHour,
                 nocturiaEpisodes,
-                nocturiaRate
+                nocturiaRate,
+                diureticAnalysis,
+                diureticRate
             };
         }
 
@@ -1034,12 +983,6 @@
             '<div class="alert alert-warning"><strong>Urgenza media:</strong> <span style="color: #ff9800">' + stats.avgUrgency + '</span>/5. Episodi ≥4: ' + stats.highUrgencyEpisodes + '.</div>' : 
             '<div class="alert alert-info"><strong>Urgenza normale:</strong> ' + stats.avgUrgency + '/5.</div>'
         }
-        ${stats.noStimulusRate > 20 ? 
-            '<div class="alert alert-warning"><strong>Minzioni senza stimolo:</strong> <span style="color: #ff9800">' + stats.noStimulusRate + '%</span> (possibile ipocontrattilità).</div>' : 
-            stats.noStimulusRate > 0 ? 
-            '<div class="alert alert-info"><strong>Minzioni senza stimolo:</strong> ' + stats.noStimulusRate + '% delle minzioni.</div>' :
-            '<div class="alert alert-info"><strong>Stimolo sempre presente</strong> nelle minzioni registrate.</div>'
-        }
         ${stats.avgUrinationVolume < 150 || stats.avgUrinationVolume > 400 ? 
             '<div class="alert alert-warning"><strong>Volume medio per minzione:</strong> <span style="color: #ff9800">' + stats.avgUrinationVolume + '</span> ml (riferimento: 150-400ml).</div>' :
             '<div class="alert alert-info"><strong>Volume medio normale:</strong> ' + stats.avgUrinationVolume + ' ml (riferimento: 150-400ml).</div>'
@@ -1047,49 +990,38 @@
     </div>
 
     <div class="section">
-        <h2>📊 Analisi Stimolo Vescicale</h2>
+        <h2>☕ Analisi Effetti Diuretici</h2>
         <div class="interpretation">
-            <p><strong>Distribuzione sensazione vescicale:</strong></p>
+            <p><strong>Distribuzione liquidi per effetto diuretico:</strong></p>
             <table class="table">
                 <tr>
-                    <th>Tipo Stimolo</th>
-                    <th>Nessuna</th>
-                    <th>Leggera</th>
-                    <th>Normale</th>
-                    <th>Forte</th>
+                    <th>Effetto</th>
+                    <th>🟢 Neutro</th>
+                    <th>🟡 Leggero</th>
+                    <th>🟠 Moderato</th>
+                    <th>🔴 Forte</th>
                 </tr>
                 <tr>
-                    <td><strong>Minzioni</strong></td>
-                    <td>${stats.stimulusDistribution.nessuna}</td>
-                    <td>${stats.stimulusDistribution.leggera}</td>
-                    <td>${stats.stimulusDistribution.normale}</td>
-                    <td>${stats.stimulusDistribution.forte}</td>
+                    <td><strong>Assunzioni</strong></td>
+                    <td>${stats.diureticAnalysis.neutro}</td>
+                    <td>${stats.diureticAnalysis.leggero}</td>
+                    <td>${stats.diureticAnalysis.moderato}</td>
+                    <td>${stats.diureticAnalysis.forte}</td>
                 </tr>
             </table>
-            ${stats.noStimulusRate > 20 ? 
-                '<div class="alert alert-warning">Elevata percentuale di minzioni senza stimolo - valutare ipocontrattilità detrusoriale.</div>' :
-                '<div class="alert alert-info">Distribuzione normale della sensazione vescicale.</div>'
+            ${stats.diureticRate > 50 ? 
+                '<div class="alert alert-warning">Elevato consumo di liquidi diuretici (' + stats.diureticRate + '%) - può influenzare la frequenza minzionale.</div>' :
+                stats.diureticRate > 0 ?
+                '<div class="alert alert-info">Liquidi diuretici: ' + stats.diureticRate + '% del totale.</div>' :
+                '<div class="alert alert-info">Solo liquidi neutri consumati.</div>'
             }
-        </div>
-    </div>
-        <div class="interpretation">
-            <p><strong>Fascia più frequente:</strong> ${stats.maxHour}:00-${parseInt(stats.maxHour)+1}:00 (${stats.hourlyDistribution[stats.maxHour]} minzioni)</p>
-            <table class="table">
-                <tr>
-                    <th>Fascia</th>
-                    <th>Mattino (06-12)</th>
-                    <th>Pomeriggio (12-18)</th>
-                    <th>Sera (18-22)</th>
-                    <th>Notte (22-06)</th>
-                </tr>
-                <tr>
-                    <td><strong>Minzioni</strong></td>
-                    <td>${[6,7,8,9,10,11].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
-                    <td>${[12,13,14,15,16,17].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
-                    <td>${[18,19,20,21].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
-                    <td>${[22,23,0,1,2,3,4,5].reduce((sum, h) => sum + (stats.hourlyDistribution[h] || 0), 0)}</td>
-                </tr>
-            </table>
+            <p><strong>Classificazione effetti:</strong></p>
+            <ul>
+                <li>🟢 <strong>Neutro:</strong> Acqua, Latte</li>
+                <li>🟡 <strong>Leggero:</strong> Tè, Succhi di frutta</li>
+                <li>🟠 <strong>Moderato:</strong> Caffè, Bibite gassate</li>
+                <li>🔴 <strong>Forte:</strong> Alcol, Energy drink</li>
+            </ul>
         </div>
     </div>
 
@@ -1160,7 +1092,6 @@
                 entries = [];
                 fluidEntries = [];
                 
-                // Cancella anche dal localStorage
                 localStorage.removeItem('diarioMinzionale_entries');
                 localStorage.removeItem('diarioMinzionale_fluidEntries');
                 
