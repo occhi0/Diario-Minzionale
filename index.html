@@ -440,7 +440,6 @@
             <div class="export-section">
                 <button class="btn" onclick="exportMedicalReport()">📋 Report</button>
                 <button class="btn btn-secondary" onclick="clearAllData()">🗑️ Cancella Tutti</button>
-                <button class="btn btn-secondary" onclick="exportBackup()">💾 Backup Dati</button>
             </div>
         </div>
     </div>
@@ -1156,36 +1155,8 @@
 </html>`;
         }
 
-        function exportBackup() {
-            const backupData = {
-                patientName: patientName,
-                entries: entries,
-                fluidEntries: fluidEntries,
-                exportDate: new Date().toISOString(),
-                version: '1.0'
-            };
-            
-            const backupJson = JSON.stringify(backupData, null, 2);
-            const blob = new Blob([backupJson], { type: 'application/json;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            const fileName = patientName ? 
-                `backup_${patientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json` :
-                `backup_diario_${new Date().toISOString().split('T')[0]}.json`;
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', fileName);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            alert('💾 Backup esportato! Conserva questo file per ripristinare i dati in futuro.');
-        }
-
         function clearAllData() {
-            if (confirm('Cancellare tutti i dati? Questa azione eliminerà anche il backup automatico.')) {
+            if (confirm('Cancellare tutti i dati? Questa azione eliminerà tutte le registrazioni.')) {
                 entries = [];
                 fluidEntries = [];
                 
@@ -1195,7 +1166,7 @@
                 
                 displayEntries();
                 updateStats();
-                alert('Tutti i dati sono stati cancellati definitivamente.');
+                alert('Tutti i dati sono stati cancellati.');
             }
         }
     </script>
