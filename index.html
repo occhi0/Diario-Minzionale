@@ -440,6 +440,7 @@
             <div class="export-section">
                 <button class="btn" onclick="exportMedicalReport()">📋 Report</button>
                 <button class="btn btn-secondary" onclick="clearAllData()">🗑️ Cancella Tutti</button>
+                <button class="btn btn-secondary" onclick="exportBackup()">💾 Backup Dati</button>
             </div>
         </div>
     </div>
@@ -468,11 +469,15 @@
 
         function savePatientName() {
             patientName = document.getElementById('patientName').value;
+            localStorage.setItem('diarioMinzionale_patientName', patientName);
         }
 
         function loadPatientName() {
-            // In un ambiente reale, questo caricherà il nome salvato
-            document.getElementById('patientName').value = patientName;
+            const saved = localStorage.getItem('diarioMinzionale_patientName');
+            if (saved) {
+                patientName = saved;
+                document.getElementById('patientName').value = saved;
+            }
         }
 
         document.getElementById('entryForm').addEventListener('submit', function(e) {
@@ -496,6 +501,7 @@
             entries.push(entry);
             entries.sort((a, b) => b.timestamp - a.timestamp);
             
+            saveAllData();
             displayEntries();
             updateStats();
             
@@ -526,6 +532,7 @@
             fluidEntries.push(entry);
             fluidEntries.sort((a, b) => b.timestamp - a.timestamp);
             
+            saveAllData();
             displayEntries();
             updateStats();
             
@@ -535,7 +542,7 @@
             document.getElementById('fluidDate').value = now.toISOString().split('T')[0];
             document.getElementById('fluidTime').value = now.toTimeString().slice(0, 5);
             
-            alert('✅ Liquido registrato!');
+            alert('💧 Liquido registrato!');
         });
 
         function clearForm() {
@@ -713,6 +720,7 @@
         function deleteEntry(id) {
             if (confirm('Elimina questa minzione?')) {
                 entries = entries.filter(entry => entry.id !== id);
+                saveAllData();
                 displayEntries();
                 updateStats();
             }
@@ -721,12 +729,47 @@
         function deleteFluidEntry(id) {
             if (confirm('Elimina questo liquido?')) {
                 fluidEntries = fluidEntries.filter(entry => entry.id !== id);
+                saveAllData();
                 displayEntries();
                 updateStats();
             }
         }
 
+        function saveAllData() {
+            localStorage.setItem('diarioMinzionale_entries', JSON.stringify(entries));
+            localStorage.setItem('diarioMinzionale_fluidEntries', JSON.stringify(fluidEntries));
+        }
+
+        function loadAllData() {
+            try {
+                const savedEntries = localStorage.getItem('diarioMinzionale_entries');
+                const savedFluidEntries = localStorage.getItem('diarioMinzionale_fluidEntries');
+                
+                if (savedEntries) {
+                    entries = JSON.parse(savedEntries);
+                    // Riconverti le date timestamp
+                    entries.forEach(entry => {
+                        entry.timestamp = new Date(entry.timestamp);
+                    });
+                }
+                
+                if (savedFluidEntries) {
+                    fluidEntries = JSON.parse(savedFluidEntries);
+                    // Riconverti le date timestamp
+                    fluidEntries.forEach(entry => {
+                        entry.timestamp = new Date(entry.timestamp);
+                    });
+                }
+            } catch (error) {
+                console.error('Errore nel caricamento dati:', error);
+                // Se ci sono errori, inizializza array vuoti
+                entries = [];
+                fluidEntries = [];
+            }
+        }
+
         function loadEntries() {
+            loadAllData();
             displayEntries();
         }
 
@@ -1113,13 +1156,46 @@
 </html>`;
         }
 
+        function exportBackup() {
+            const backupData = {
+                patientName: patientName,
+                entries: entries,
+                fluidEntries: fluidEntries,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const backupJson = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([backupJson], { type: 'application/json;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const fileName = patientName ? 
+                `backup_${patientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json` :
+                `backup_diario_${new Date().toISOString().split('T')[0]}.json`;
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', fileName);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert('💾 Backup esportato! Conserva questo file per ripristinare i dati in futuro.');
+        }
+
         function clearAllData() {
-            if (confirm('Cancellare tutti i dati?')) {
+            if (confirm('Cancellare tutti i dati? Questa azione eliminerà anche il backup automatico.')) {
                 entries = [];
                 fluidEntries = [];
+                
+                // Cancella anche dal localStorage
+                localStorage.removeItem('diarioMinzionale_entries');
+                localStorage.removeItem('diarioMinzionale_fluidEntries');
+                
                 displayEntries();
                 updateStats();
-                alert('Dati cancellati.');
+                alert('Tutti i dati sono stati cancellati definitivamente.');
             }
         }
     </script>
