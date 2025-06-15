@@ -245,6 +245,139 @@
             border-top: 1px solid #e1e5e9;
         }
 
+        .help-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .help-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: background 0.3s ease;
+        }
+
+        .close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .modal-body {
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .guide-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .guide-section h3 {
+            color: #4facfe;
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .guide-section p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .guide-section ol, .guide-section ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .guide-section li {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .tip {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .tip strong {
+            color: #2e7d32;
+        }
+
         @media (max-width: 600px) {
             .container {
                 margin: 8px;
@@ -268,6 +401,7 @@
 <body>
     <div class="container">
         <div class="header">
+            <button class="help-btn" onclick="showGuide()">❓ Guida</button>
             <h1>💧 Diario Minzionale</h1>
             <p>Strumento di monitoraggio per supporto diagnostico</p>
         </div>
@@ -445,6 +579,103 @@
         </div>
     </div>
 
+    <!-- Modal Guida -->
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📖 Guida all'uso del Diario Minzionale</h2>
+                <span class="close" onclick="closeGuide()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="guide-section">
+                    <h3>🎯 Come iniziare</h3>
+                    <ol>
+                        <li><strong>Inserisci il tuo nome</strong> nella sezione "Informazioni Paziente"</li>
+                        <li><strong>Registra ogni minzione</strong> durante la giornata</li>
+                        <li><strong>Registra ogni liquido</strong> che bevi</li>
+                        <li><strong>Continua per 3 giorni</strong> o come indicato dal medico</li>
+                    </ol>
+                </div>
+
+                <div class="guide-section">
+                    <h3>💧 Come registrare una minzione</h3>
+                    <p><strong>Campi obbligatori:</strong></p>
+                    <ul>
+                        <li><strong>Data e Ora:</strong> Si impostano automaticamente</li>
+                        <li><strong>Volume:</strong> Stima approssimativa in ml (es. 250ml = bicchiere normale)</li>
+                    </ul>
+                    <p><strong>Campi opzionali:</strong></p>
+                    <ul>
+                        <li><strong>Urgenza (1-5):</strong> Quanto era urgente andare in bagno</li>
+                        <li><strong>Stimolo:</strong> Nessuna, Leggera, Normale, Forte</li>
+                        <li><strong>Incontinenza:</strong> Se hai avuto perdite</li>
+                        <li><strong>Attività:</strong> Cosa stavi facendo</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h3>🥤 Come registrare i liquidi</h3>
+                    <p><strong>Registra tutto quello che bevi:</strong></p>
+                    <ul>
+                        <li><strong>Volume:</strong> Quantità (es. 330ml = lattina, 500ml = bottiglia)</li>
+                        <li><strong>Tipo:</strong> Scegli dal menu cosa bevi - apparirà l'effetto diuretico</li>
+                    </ul>
+                    <div class="tip">
+                        <strong>💡 Suggerimento:</strong> I liquidi con caffeina (caffè, tè) e alcol hanno effetto diuretico e possono aumentare la frequenza minzionale.
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <h3>📋 Come generare il report per il medico</h3>
+                    <ol>
+                        <li><strong>Raccogli dati</strong> per il periodo indicato dal medico</li>
+                        <li><strong>Clicca "📋 Report"</strong> in fondo alla pagina</li>
+                        <li><strong>Si scarica automaticamente</strong> un file HTML</li>
+                        <li><strong>Invia il file al medico</strong> via email o portalo alla visita</li>
+                        <li><strong>Clicca "🗑️ Cancella Tutti"</strong> per iniziare un nuovo periodo</li>
+                    </ol>
+    
+                    <div class="tip">
+                        <strong>⚠️ Importante:</strong> Prima di cancellare i dati, genera sempre il report.
+                        
+                        <p style="margin-top: 10px;"><strong>Strategia consigliata:</strong></p>
+                        <ul style="margin: 5px 0 0 0;">
+                            <li><strong>Report giornaliero:</strong> Genera il report ogni sera e cancella i dati per iniziare il giorno successivo</li>
+                            <li><strong>Report completo:</strong> Raccogli dati per 3-4 giorni, genera un unico report del periodo, poi cancella tutto</li>
+                        </ul>
+                    </div>
+                </div>                                     
+
+                <div class="guide-section">
+                    <h3>⚠️ Consigli importanti</h3>
+                    <ul>
+                        <li><strong>Sii preciso:</strong> Registra tutto, anche piccole quantità</li>
+                        <li><strong>Non aspettare:</strong> Registra subito dopo ogni minzione/bevuta</li>
+                        <li><strong>Volume approssimativo:</strong> Non serve essere precisissimi, una stima va bene</li>
+                        <li><strong>Giorni normali:</strong> Mantieni le tue abitudini normali durante la raccolta</li>
+                        <li><strong>Backup automatico:</strong> I dati si salvano automaticamente, non perderai nulla</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h3>📏 Riferimenti volume</h3>
+                    <p><strong>Per stimare i volumi:</strong></p>
+                    <ul>
+                        <li><strong>50-100ml:</strong> Mezzo bicchiere d'acqua</li>
+                        <li><strong>150-250ml:</strong> Bicchiere normale</li>
+                        <li><strong>330ml:</strong> Lattina</li>
+                        <li><strong>500ml:</strong> Bottiglia piccola</li>
+                        <li><strong>250-400ml:</strong> Volume normale minzione</li>
+                    </ul>
+                </div>
+
+                <div class="tip">
+                    <strong>🏥 Ricorda:</strong> Questo diario offre al medico un primo quadro utile per la diagnosi. La precisione nella registrazione lo rende uno strumento prezioso.
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let entries = [];
         let fluidEntries = [];
@@ -463,7 +694,32 @@
             loadPatientName();
             loadEntries();
             updateStats();
+            
+            // Inizializza eventi guida
+            setupGuideEvents();
         });
+
+        function setupGuideEvents() {
+            // Assicurati che gli eventi siano collegati
+            const helpBtn = document.querySelector('.help-btn');
+            if (helpBtn) {
+                helpBtn.addEventListener('click', showGuide);
+            }
+            
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeGuide);
+            }
+            
+            const modal = document.getElementById('guideModal');
+            if (modal) {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        closeGuide();
+                    }
+                });
+            }
+        }
 
         function savePatientName() {
             patientName = document.getElementById('patientName').value;
@@ -1085,6 +1341,22 @@
     </div>
 </body>
 </html>`;
+        }
+
+        function showGuide() {
+            document.getElementById('guideModal').style.display = 'block';
+        }
+
+        function closeGuide() {
+            document.getElementById('guideModal').style.display = 'none';
+        }
+
+        // Chiudi la guida cliccando fuori dal modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('guideModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
         }
 
         function clearAllData() {
